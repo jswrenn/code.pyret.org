@@ -8,11 +8,11 @@ heroku config:set \
 GOOGLE_CLIENT_ID="" \
 GOOGLE_CLIENT_SECRET="" \
 GOOGLE_API_KEY="" \
-BASE_URL="https://rough-pyret.herokuapp.com" \
+BASE_URL="https://$1.herokuapp.com" \
 SESSION_SECRET="not-so-secret" \
 REDISCLOUD_URL="" \
 USE_STANDALONE_PYRET="true" \
-PYRET_RELEASE_BASE="https://rough-pyret.herokuapp.com/js" \
+PYRET_RELEASE_BASE="https://$1.herokuapp.com/js" \
 CURRENT_PYRET_RELEASE="" \
 PORT=5000 \
 NODE_ENV=development 
