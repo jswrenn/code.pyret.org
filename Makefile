@@ -14,6 +14,8 @@ else
 	RM = rm -f $1
 endif
 
+CM=node_modules/codemirror
+
 
 build/web/js/pyret.js.gz: node_modules/pyret-lang/build/phase0/pyret.js
 	gzip -9 node_modules/pyret-lang/build/phase0/pyret.js -c > build/web/js/pyret.js.gz
@@ -54,7 +56,17 @@ COPY_CSS := $(patsubst src/web/%.css,build/web/%.css,$(wildcard src/web/css/*.cs
 build/web/css/%.css: src/web/css/%.css
 	cp $< $@
 
-build/web/css/codemirror.css: lib/CodeMirror/lib/codemirror.css
+COPY_NEW_CSS := $(patsubst src/web/%.css,build/web/%.css,$(wildcard src/web/neweditor/css/*.css))
+
+build/web/neweditor/css/%.css: src/web/neweditor/css/%.css
+	cp $< $@
+
+COPY_NEW_JS := $(patsubst src/web/%.js,build/web/%.js,$(wildcard src/web/neweditor/js/*.js))
+
+build/web/neweditor/js/%.js: src/web/neweditor/js/%.js
+	cp $< $@
+
+build/web/css/codemirror.css: $(CM)/lib/codemirror.css
 	cp $< $@
 
 MISC_CSS = build/web/css/codemirror.css
@@ -84,16 +96,19 @@ build/web/js/url.js: node_modules/url.js/url.js
 build/web/js/require.js: node_modules/requirejs/require.js
 	cp $< $@
 
-build/web/js/codemirror.js: lib/CodeMirror/lib/codemirror.js
+build/web/js/codemirror.js: $(CM)/lib/codemirror.js
 	cp $< $@
 
-build/web/js/matchbrackets.js: lib/CodeMirror/addon/edit/matchbrackets.js
+build/web/js/matchbrackets.js: $(CM)/addon/edit/matchbrackets.js
 	cp $< $@
 
-build/web/js/pyret-mode.js: lib/CodeMirror/mode/pyret/pyret.js
+build/web/js/pyret-mode.js: $(CM)/mode/pyret/pyret.js
 	cp $< $@
 
-MISC_JS = build/web/js/q.js build/web/js/url.js build/web/js/require.js build/web/js/codemirror.js build/web/js/matchbrackets.js build/web/js/pyret-mode.js build/web/js/s-expression-lib.js build/web/js/seedrandom.js
+build/web/js/emacs.js: $(CM)/keymap/emacs.js
+	cp $< $@
+
+MISC_JS = build/web/js/q.js build/web/js/url.js build/web/js/require.js build/web/js/codemirror.js build/web/js/matchbrackets.js build/web/js/pyret-mode.js build/web/js/s-expression-lib.js build/web/js/seedrandom.js build/web/js/emacs.js
 
 MISC_IMG = build/web/img/pyret-icon.png build/web/img/pyret-logo.png build/web/img/pyret-spin.gif build/web/img/up-arrow.png build/web/img/down-arrow.png
 
@@ -105,6 +120,8 @@ WEB = build/web
 WEBJS = build/web/js
 WEBCSS = build/web/css
 WEBIMG = build/web/img
+NEWCSS = build/web/neweditor/css
+NEWJS = build/web/neweditor/js
 
 $(WEB):
 	@$(call MKDIR,$(WEB))
@@ -118,5 +135,10 @@ $(WEBCSS):
 $(WEBIMG):
 	@$(call MKDIR,$(WEBIMG))
 
-web: $(WEB) $(WEBJS) $(WEBCSS) $(WEBIMG) $(OUT_HTML) $(COPY_HTML) $(OUT_CSS) $(COPY_CSS) $(COPY_JS) $(COPY_GIF) build/web/js/pyret.js.gz $(MISC_JS) $(MISC_CSS) $(MISC_IMG)
+$(NEWCSS):
+	@$(call MKDIR,$(NEWCSS))
 
+$(NEWJS):
+	@$(call MKDIR,$(NEWJS))
+
+web: $(WEB) $(WEBJS) $(WEBCSS) $(WEBIMG) $(NEWCSS) $(NEWJS) $(OUT_HTML) $(COPY_HTML) $(OUT_CSS) $(COPY_CSS) $(COPY_JS) $(COPY_GIF) build/web/js/pyret.js.gz $(MISC_JS) $(MISC_CSS) $(MISC_IMG) $(COPY_NEW_CSS) $(COPY_NEW_JS)
